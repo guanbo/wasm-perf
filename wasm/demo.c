@@ -8,14 +8,15 @@
 
 int main(int argc, char **argv) {
     ssize_t n, m;
-    char buf[BUFSIZ];
+    char buf[BUFSIZ*2];
 	struct timeval start;
 	struct timeval end;
 	long int runtime = 0;
 	float throughput = 0;
+    int buffer_size = 64;
 
-    if (argc != 2) {
-        fprintf(stderr, "usage: %s file\n", argv[0]);
+    if (argc != 3) {
+        fprintf(stderr, "usage: %s file buffer_size\n", argv[0]);
         exit(1);
     }
 
@@ -27,13 +28,15 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    while ((n = read(in, buf, BUFSIZ)) > 0) {
+    for (size_t i = 0; i < 100000; i++)
+    {
+        n = read(in, buf, BUFSIZ);
+        if (n < 0) {
+            fprintf(stderr, "read error: %s\n", strerror(errno));
+            exit(1);
+        }
     }
-
-    if (n < 0) {
-        fprintf(stderr, "read error: %s\n", strerror(errno));
-        exit(1);
-    }
+    
 	gettimeofday(&end, NULL);
 	
 	runtime = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
