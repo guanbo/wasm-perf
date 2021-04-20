@@ -14,9 +14,10 @@ int main(int argc, char **argv) {
 	long int runtime = 0;
 	float throughput = 0;
     int buffer_size = 64;
+    int times = 100000;
 
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s file buffer_size\n", argv[0]);
+    if (argc < 3) {
+        fprintf(stderr, "usage: %s file buffer_size [times]\n", argv[0]);
         exit(1);
     }
 
@@ -26,6 +27,11 @@ int main(int argc, char **argv) {
         exit(1);
     }
     buffer_size = atoi(argv[2]);
+    if (argc > 3)
+    {
+        times = atoi(argv[3]);
+    }
+    
 
     for (size_t i = 0; i < 10; i++)
     {
@@ -38,7 +44,7 @@ int main(int argc, char **argv) {
 
 	gettimeofday(&start,NULL);
 
-    for (size_t i = 0; i < 100000; i++)
+    for (size_t i = 0; i < times; i++)
     {
         n = read(in, buf, buffer_size);
         if (n < 0) {
@@ -50,7 +56,7 @@ int main(int argc, char **argv) {
 	gettimeofday(&end, NULL);
 	
 	runtime = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
-    throughput = (buffer_size * 100000 * 8000.0 / runtime);
+    throughput = (buffer_size * times * 8000.0 / runtime);
     
     // printf("Size: %d(byte)\n", buffer_size);
 	// printf("Time latency : %ld (us)\n", runtime);

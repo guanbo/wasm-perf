@@ -31,9 +31,12 @@ WAMRC=~/repo/wasm-micro-runtime/wamr-compiler/build/wamrc
 WAMR=~/repo/wasm-micro-runtime/product-mini/platforms/linux/build/iwasm
 SSVMC=~/repo/SSVM/build/tools/ssvm/ssvmc
 SSVM=~/repo/SSVM/build/tools/ssvm/ssvm
+FGROOT=~/repo/FlameGraph
 
 TEST_DIR=/mnt/train
 TEST_FILE=${TEST_DIR}/data.tar
+
+BENCHMARK_PATH="$(pwd)/benchmark"
 
 function perpare()
 {
@@ -79,9 +82,10 @@ function test_all()
 
 function print_result()
 {
+  echo > result.csv
   for((i=0;i<"${#KINDS[@]}";i++));
   do
-    python3 stat.py ${KINDS[i]}
+    python3 stat.py ${KINDS[i]} >> result.csv
     # for((j=0;j<${#BUFFER_SIZES};j++));
     # do
     #   echo "${KINDS[i]} - ${BUFFER_SIZES[j]}"
@@ -90,8 +94,33 @@ function print_result()
   done  
 }
 
-perpare
-build_all
+function perf_go()
+{
+  pushd $2
+  sudo perf record -p $1 -F 999 -a -g
+  sudo chmod +r *.data
+  perf script > out.stack
+  $FGROOT/stackcollapse-perf.pl out.stack > out.folded
+  $FGROOT/flamegraph.pl out.folded > test.svg
+  popd
+}
 
-test_all
-print_result
+function perf_all()
+{
+  pushd wasm
+  # ./demo ${TEST_FILE} 1024 10000000 &
+  # perf_go $! "${BENCHMARK_PATH}/native"
+  # $WAMR --dir=${TEST_DIR} demo.aot ${TEST_FILE} 1024 10000000 &
+  # perf_go $! "${BENCHMARK_PATH}/wamr"
+  $SSVM --dir ${TEST_DIR}:${TEST_DIR} demo.so ${TEST_FILE} 1024 10000000 &
+  perf_go $! "${BENCHMARK_PATH}/ssvm"
+  popd
+}
+
+# perpare
+# build_all
+
+# test_all
+# print_result
+
+perf_all
