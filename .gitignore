@@ -3,3 +3,5 @@ build/
 *.wasm
 demo
 benchmark/
+*.so
+*.aot
