@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	gettimeofday(&end, NULL);
 	
 	runtime = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec);
-    throughput = (sizeof(buf) * 8000.0 / runtime);
+    throughput = (buffer_size * 100000 * 8000.0 / runtime);
     
     // printf("Size: %d(byte)\n", buffer_size);
 	// printf("Time latency : %ld (us)\n", runtime);
