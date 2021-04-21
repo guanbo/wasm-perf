@@ -124,3 +124,4 @@ function perf_all()
 # print_result
 
 perf_all
+# sudo sshfs -o allow_other,cache=no,IdentityFile=/home/ci/.ssh/id_rsa,no_readahead,cache_timeout=0,noauto_cache train@192.168.10.43:/home/train /mnt/train
