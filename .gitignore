@@ -6,3 +6,4 @@ benchmark/
 *.so
 *.aot
 *.csv
+wasm/demo_go

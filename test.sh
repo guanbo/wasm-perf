@@ -25,7 +25,13 @@ BUFFER_SIZES=(
   2048
 )
 
-KINDS=(ssvm wamr native docker)
+KINDS=(
+  # ssvm 
+  # wamr 
+  native 
+  # docker 
+  go
+)
 
 WAMRC=~/repo/wasm-micro-runtime/wamr-compiler/build/wamrc
 WAMR=~/repo/wasm-micro-runtime/product-mini/platforms/linux/build/iwasm
@@ -54,8 +60,9 @@ function build_all()
   gcc demo.c -o demo
   /opt/wasi-sdk/bin/clang demo.c -o demo.wasm
   $WAMRC -o demo.aot demo.wasm
-  $SSVMC demo.wasm demo.so
-  docker build -t wasm-benchmark/demo .
+  # $SSVMC demo.wasm demo.so
+  # docker build -t wasm-benchmark/demo .
+  go build -o demo_go demo.go && chmod +x demo_go
   popd
 }
 
@@ -65,20 +72,19 @@ function test_all()
   for((i=0;i<"${#BUFFER_SIZES[@]}";i++));
   do
     RESULT_FILE=${BUFFER_SIZES[i]}.csv
-    # echo "latency,throughput" > ../benchmark/native/${RESULT_FILE}
+    echo "latency,throughput" > ../benchmark/native/${RESULT_FILE}
     # echo "latency,throughput" > ../benchmark/wamr/${RESULT_FILE}
     # echo "latency,throughput" > ../benchmark/ssvm/${RESULT_FILE}
-    echo "latency,throughput" > $BENCHMARK_PATH/docker/${RESULT_FILE}
+    # echo "latency,throughput" > $BENCHMARK_PATH/docker/${RESULT_FILE}
+    echo "latency,throughput" > $BENCHMARK_PATH/go/${RESULT_FILE}
     for((j=0;j<10;j++));
     do
-      # ./demo ${TEST_FILE} ${BUFFER_SIZES[i]} >> ../benchmark/native/${RESULT_FILE}
+      ./demo ${TEST_FILE} ${BUFFER_SIZES[i]} >> ../benchmark/native/${RESULT_FILE}
       # $WAMR --dir=${TEST_DIR} demo.aot ${TEST_FILE} ${BUFFER_SIZES[i]} >> ../benchmark/wamr/${RESULT_FILE}
       # $SSVM --dir ${TEST_DIR}:${TEST_DIR} demo.so ${TEST_FILE} ${BUFFER_SIZES[i]} >> ../benchmark/ssvm/${RESULT_FILE}
-      docker run --rm -it --runtime=runc -a stdin -a stdout -a stderr -v "$TEST_FILE:$TEST_FILE" wasm-benchmark/demo bash -c "/root/demo ${TEST_FILE} ${BUFFER_SIZES[i]}" >> ../benchmark/docker/${RESULT_FILE}
+      # docker run --rm -it --runtime=runc -a stdin -a stdout -a stderr -v "$TEST_FILE:$TEST_FILE" wasm-benchmark/demo bash -c "/root/demo ${TEST_FILE} ${BUFFER_SIZES[i]}" >> ../benchmark/docker/${RESULT_FILE}
+      ./demo_go ${TEST_FILE} ${BUFFER_SIZES[i]} >> ../benchmark/go/${RESULT_FILE}
     done    
-    # echo "" >> ../benchmark/native/${RESULT_FILE}
-    # echo "" >> ../benchmark/wamr/${RESULT_FILE}
-    # echo "" >> ../benchmark/ssvm/${RESULT_FILE}
   done
   popd
 }
@@ -123,7 +129,7 @@ function perf_all()
 # perpare
 # build_all
 
-test_all
+# test_all
 print_result
 
 # perf_all

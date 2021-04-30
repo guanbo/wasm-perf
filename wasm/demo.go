@@ -72,8 +72,8 @@ func main() {
 	}
 
 	end := time.Now()
-	elapsed := end.Sub(start).Milliseconds()
+	elapsed := end.Sub(start).Microseconds()
 	throughput := int64(buffer_size*times*8000) / elapsed
 
-	fmt.Println("%v, %v", elapsed, throughput)
+	fmt.Println(elapsed, ",", throughput)
 }

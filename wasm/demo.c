@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     // printf("Size: %d(byte)\n", buffer_size);
 	// printf("Time latency : %ld (us)\n", runtime);
     // printf("Throughput : %5.4lf Kbps\n", throughput);
-    printf("%ld, %5.4lf\n", runtime, throughput);
+    printf("%ld, %5.0lf\n", runtime, throughput);
 
     return EXIT_SUCCESS;
 }
