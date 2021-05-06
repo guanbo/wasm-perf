@@ -38,6 +38,7 @@ WAMR=~/repo/wasm-micro-runtime/product-mini/platforms/linux/build/iwasm
 SSVMC=~/repo/SSVM/build/tools/ssvm/ssvmc
 SSVM=~/repo/SSVM/build/tools/ssvm/ssvm
 FGROOT=~/repo/FlameGraph
+TINYGO=~/repo/tinygo/build/tinygo
 
 TEST_DIR=/mnt/train
 TEST_FILE=${TEST_DIR}/data.tar
@@ -62,7 +63,7 @@ function build_all()
   $WAMRC -o demo.aot demo.wasm
   # $SSVMC demo.wasm demo.so
   # docker build -t wasm-benchmark/demo .
-  go build -o demo_go demo.go && chmod +x demo_go
+  $TINYGO build -gc=none -o demo_go demo.go && chmod +x demo_go
   popd
 }
 
@@ -127,10 +128,10 @@ function perf_all()
 }
 
 # perpare
-# build_all
+build_all
 
 # test_all
-print_result
+# print_result
 
 # perf_all
 # sudo sshfs -o allow_other,cache=no,IdentityFile=/home/ci/.ssh/id_rsa,no_readahead,cache_timeout=0,noauto_cache train@192.168.10.43:/home/train /mnt/train

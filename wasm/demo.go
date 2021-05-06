@@ -16,7 +16,6 @@ package main
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"strconv"
 	"time"
@@ -32,7 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	f, err := os.OpenFile(os.Args[1], os.O_RDONLY, fs.ModePerm)
+	f, err := os.OpenFile(os.Args[1], os.O_RDONLY, 0777)
 	if err != nil {
 		fmt.Println("error opening input %v: %v", os.Args[1], err)
 		os.Exit(1)
