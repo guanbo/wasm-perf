@@ -24,24 +24,26 @@ import (
 func main() {
 
 	times := 100000
-	argc := len(os.Args)
+	argc := 3 //len(os.Args)
 
 	if argc < 3 {
 		fmt.Printf("usage: %v file buffer_size [times]\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	f, err := os.OpenFile(os.Args[1], os.O_RDONLY, 0777)
+	filename := "/mnt/train/data.tar"
+	f, err := os.OpenFile(filename, os.O_RDONLY, 0777)
 	if err != nil {
 		fmt.Println("error opening input %v: %v", os.Args[1], err)
 		os.Exit(1)
 	}
 
-	buffer_size, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		fmt.Println("buffer size is not correct number: %v", os.Args[2])
-		os.Exit(1)
-	}
+	buffer_size := 64
+	// buffer_size, err := strconv.Atoi(os.Args[2])
+	// if err != nil {
+	// 	fmt.Println("buffer size is not correct number: %v", os.Args[2])
+	// 	os.Exit(1)
+	// }
 	buffer := make([]byte, buffer_size)
 
 	if argc > 3 {

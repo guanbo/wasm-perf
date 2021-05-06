@@ -59,8 +59,8 @@ function build_all()
 {
   pushd wasm
   gcc demo.c -o demo
-  /opt/wasi-sdk/bin/clang demo.c -o demo.wasm
-  $WAMRC -o demo.aot demo.wasm
+  # /opt/wasi-sdk/bin/clang demo.c -o demo.wasm
+  # $WAMRC -o demo.aot demo.wasm
   # $SSVMC demo.wasm demo.so
   # docker build -t wasm-benchmark/demo .
   $TINYGO build -gc=none -o demo_go demo.go && chmod +x demo_go
